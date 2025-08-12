@@ -11,7 +11,10 @@ class BalanceController {
   }
 
   async create(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-    const balance = req.body as BalanceType;
+    const balance: BalanceType = {
+      ...req.body,
+      date: new Date(req.body.date).toISOString(),
+    };
 
     try {
       const data = await this.balanceService.create(

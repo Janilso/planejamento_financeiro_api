@@ -1,4 +1,9 @@
-import { BalanceModel, BalanceType, BalanceDocument } from './balance.model';
+import {
+  BalanceModel,
+  BalanceType,
+  BalanceBaseType,
+  BalanceDocument,
+} from './balance.model';
 import { UserModel, UserType, UserDocument } from './user.model';
 
 export {
@@ -7,5 +12,6 @@ export {
   UserDocument,
   BalanceModel,
   BalanceType,
+  BalanceBaseType,
   BalanceDocument,
 };
