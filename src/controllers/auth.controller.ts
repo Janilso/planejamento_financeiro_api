@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import { AuthService } from '../services';
+import { UserModel } from '../models';
 
 class AuthController {
   authService: AuthService;
 
   constructor(clientId: string) {
-    this.authService = new AuthService(clientId);
+    this.authService = new AuthService(clientId, UserModel);
   }
 
   async login(req: Request, res: Response, next: NextFunction) {

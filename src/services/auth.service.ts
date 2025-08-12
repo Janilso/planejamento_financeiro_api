@@ -1,13 +1,16 @@
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
-import { UserModel } from '../models';
-import { environment, TokenConfig } from '../config';
+import { UserDocument } from '../models';
+import { environment, getErrorMongo, TokenConfig } from '../config';
 import { HttpError } from '../middlewares';
-import { Document } from 'mongoose';
+import { Document, Model } from 'mongoose';
 
 class AuthService {
   private readonly googleClient: OAuth2Client;
 
-  constructor(private readonly clientId: string) {
+  constructor(
+    private readonly clientId: string,
+    private readonly userModel: Model<UserDocument>,
+  ) {
     this.googleClient = new OAuth2Client(this.clientId);
   }
 
@@ -39,14 +42,13 @@ class AuthService {
     try {
       await user.save();
     } catch (error) {
-      console.log(error);
-      throw new HttpError('Erro ao salvar usuário', 500);
+      getErrorMongo(error, 'Erro ao salvar ganho ou gasto');
     }
   }
 
   private async saveOrCreateUser(user: TokenPayload | undefined) {
     try {
-      const userCreated = await UserModel.findOneAndUpdate(
+      const userCreated = await this.userModel.findOneAndUpdate(
         { email: user?.email },
         { $set: user },
         { upsert: true, new: true },
@@ -54,8 +56,7 @@ class AuthService {
 
       return userCreated;
     } catch (error) {
-      console.log(error);
-      throw new HttpError('Erro ao salvar usuário', 500);
+      getErrorMongo(error, 'Erro ao salvar ganho ou gasto');
     }
   }
 
