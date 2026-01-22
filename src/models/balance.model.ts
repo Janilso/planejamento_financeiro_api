@@ -1,14 +1,14 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 
 export type BalanceBaseType = {
   name: string;
   value: number;
+  date: string;
   realized: boolean;
   installment: number;
-  date: string;
-  userId?: string;
   totalInstallments: number;
   type: string;
+  userId?: string;
 };
 
 export type BalanceType = BalanceBaseType & {
@@ -18,6 +18,10 @@ export type BalanceType = BalanceBaseType & {
 };
 
 export interface BalanceDocument extends BalanceType, Document {}
+
+export type BalanceLean = BalanceType & {
+  _id: Types.ObjectId;
+};
 
 const BalanceInstallmentSchema = new Schema<BalanceBaseType>(
   {

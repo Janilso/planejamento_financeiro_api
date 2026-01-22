@@ -29,7 +29,7 @@ class AuthService {
     const refreshToken = tokenConfig.generateToken(
       payloadToken,
       environment.jwtRefrashSecretKey,
-      '7d',
+      '15d',
     );
 
     userCreated.refreshToken = refreshToken;

@@ -26,6 +26,15 @@ class BalanceController {
       next(error);
     }
   }
+
+  async get(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const data = await this.balanceService.getAllByUserId(req.user?.id || '');
+      return res.status(201).json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default BalanceController;

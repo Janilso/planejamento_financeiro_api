@@ -12,8 +12,7 @@ export const authMiddleware = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader?.split(' ')[1];
+  const token = req.headers.authorization;
 
   if (!token) {
     return res.status(401).json({ error: 'Acesso não autorizado' });
