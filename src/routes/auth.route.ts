@@ -12,5 +12,10 @@ authRoutes.post(
   validateBody(AuthSchema.login),
   authController.login.bind(authController),
 );
+authRoutes.post(
+  '/auth/refresh',
+  validateBody(AuthSchema.refresh),
+  authController.refresh.bind(authController),
+);
 
 export default authRoutes;

@@ -18,9 +18,25 @@ class AuthService {
     const dataUser = await this.validateGoogleToken(googleToken);
 
     const userCreated = await this.saveOrCreateUser(dataUser);
-    const tokenConfig = new TokenConfig();
     const payloadToken = { id: userCreated?.id };
 
+    const { token, refreshToken } =
+      this.generateTokenAndRefreshToken(payloadToken);
+
+    userCreated.refreshToken = refreshToken;
+    await this.saveRefreshTokenInUser(userCreated);
+
+    return { token, refreshToken };
+  }
+
+  async refresh(prevRefreshToken: string) {
+    // TODO: Implementar validação do refresh token
+    const { token, refreshToken } = this.generateTokenAndRefreshToken({});
+    return { token, refreshToken };
+  }
+
+  private generateTokenAndRefreshToken<T extends object>(payloadToken: T) {
+    const tokenConfig = new TokenConfig();
     const token = tokenConfig.generateToken(
       payloadToken,
       environment.jwtSecretKey,
@@ -31,10 +47,6 @@ class AuthService {
       environment.jwtRefrashSecretKey,
       '15d',
     );
-
-    userCreated.refreshToken = refreshToken;
-    await this.saveRefreshTokenInUser(userCreated);
-
     return { token, refreshToken };
   }
 
@@ -42,7 +54,7 @@ class AuthService {
     try {
       await user.save();
     } catch (error) {
-      getErrorMongo(error, 'Erro ao salvar ganho ou gasto');
+      getErrorMongo(error, 'Erro ao salvar token de atualização');
     }
   }
 

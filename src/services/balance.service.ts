@@ -20,7 +20,7 @@ class BalanceService {
         installment: balance.installment,
         totalInstallments: balance?.totalInstallments ?? 0,
         date: balance.date,
-        listInstallments: this._generateListInstallments(balance),
+        listInstallments: this.generateListInstallments(balance),
       });
       return balanceCreated;
     } catch (error) {
@@ -34,10 +34,10 @@ class BalanceService {
         .find({ userId })
         .lean<BalanceLean[]>();
       const balances = balancesLean.reduce<GetBalancesType[]>(
-        (acc, balance) => [...acc, ...this._factoryGetBalanceResponse(balance)],
+        (acc, balance) => [...acc, ...this.factoryGetBalanceResponse(balance)],
         [],
       );
-      const response = this._generateListInstallmentsByUser(balances);
+      const response = this.generateListInstallmentsByUser(balances);
       return response;
     } catch (error) {
       getErrorMongo(error, 'Erro ao buscar ganhos ou gastos do usuário');
@@ -53,7 +53,7 @@ class BalanceService {
     }
   }
 
-  _generateListInstallments(balance: BalanceType): BalanceBaseType[] {
+  private generateListInstallments(balance: BalanceType): BalanceBaseType[] {
     if (balance?.totalInstallments > 1) {
       return Array.from({ length: balance?.totalInstallments })?.map((_, i) => {
         const installment = i + 1;
@@ -77,7 +77,7 @@ class BalanceService {
     return [];
   }
 
-  _generateListInstallmentsByUser(
+  private generateListInstallmentsByUser(
     balances: GetBalancesType[],
   ): GetBalanceResponse {
     return balances.reduce<GetBalanceResponse>((acc, balance) => {
@@ -100,7 +100,7 @@ class BalanceService {
     }, {});
   }
 
-  _factoryGetBalanceResponse(balance: BalanceLean): GetBalancesType[] {
+  private factoryGetBalanceResponse(balance: BalanceLean): GetBalancesType[] {
     if (balance.totalInstallments > 1) {
       return (
         balance?.listInstallments?.map((installment) => ({
