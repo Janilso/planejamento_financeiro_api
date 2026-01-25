@@ -1,8 +1,9 @@
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
-import { UserDocument } from '../models';
-import { environment, getErrorMongo, TokenConfig } from '../config';
-import { HttpError } from '../middlewares';
 import { Document, Model } from 'mongoose';
+import { environment, getErrorMongo, TokenConfig } from '../config';
+import { AppError } from '../middlewares';
+import { UserDocument } from '../models';
+import { ERROR_MESSAGES } from '../utils';
 
 class AuthService {
   private readonly googleClient: OAuth2Client;
@@ -18,7 +19,7 @@ class AuthService {
     const dataUser = await this.validateGoogleToken(googleToken);
 
     const userCreated = await this.saveOrCreateUser(dataUser);
-    const payloadToken = { id: userCreated?.id };
+    const payloadToken = { id: userCreated?.id?.toString() };
 
     const { token, refreshToken } =
       this.generateTokenAndRefreshToken(payloadToken);
@@ -30,9 +31,35 @@ class AuthService {
   }
 
   async refresh(prevRefreshToken: string) {
-    // TODO: Implementar validação do refresh token
-    const { token, refreshToken } = this.generateTokenAndRefreshToken({});
-    return { token, refreshToken };
+    const user = await this.userModel.findOne({
+      refreshToken: prevRefreshToken,
+    });
+    if (!user) {
+      throw new AppError(401, ERROR_MESSAGES.INVALID_REFRESH_TOKEN);
+    }
+
+    try {
+      const tokenConfig = new TokenConfig();
+      const decoded = tokenConfig.verifyToken(
+        prevRefreshToken,
+        environment.jwtRefrashSecretKey,
+      );
+
+      if (decoded?.id !== user?.id?.toString()) {
+        throw new AppError(401, ERROR_MESSAGES.INVALID_REFRESH_TOKEN);
+      }
+      const { token, refreshToken } = this.generateTokenAndRefreshToken({
+        id: user?.id,
+      });
+      user.refreshToken = refreshToken;
+      await this.saveRefreshTokenInUser(user);
+
+      return { token, refreshToken };
+    } catch {
+      user.refreshToken = '';
+      await this.saveRefreshTokenInUser(user);
+      throw new AppError(401, ERROR_MESSAGES.INVALID_REFRESH_TOKEN);
+    }
   }
 
   private generateTokenAndRefreshToken<T extends object>(payloadToken: T) {
@@ -54,7 +81,7 @@ class AuthService {
     try {
       await user.save();
     } catch (error) {
-      getErrorMongo(error, 'Erro ao salvar token de atualização');
+      getErrorMongo(error, 'Erro ao salvar token de atualização.');
     }
   }
 
@@ -68,7 +95,7 @@ class AuthService {
 
       return userCreated;
     } catch (error) {
-      getErrorMongo(error, 'Erro ao salvar ganho ou gasto');
+      getErrorMongo(error, ERROR_MESSAGES.SAVE_CREATE);
     }
   }
 
@@ -81,7 +108,9 @@ class AuthService {
 
       return ticket.getPayload();
     } catch {
-      throw new HttpError('Não autorizado', 401);
+      throw new AppError(401, ERROR_MESSAGES.INVALID_ACCESS, {
+        name: 'AuthError',
+      });
     }
   }
 }

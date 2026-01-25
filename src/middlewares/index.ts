@@ -1,11 +1,16 @@
 import { authMiddleware, AuthenticatedRequest } from './auth.middleware';
-import { errorHandler, HttpError } from './errorHandler.middleware';
+import {
+  asyncHandler,
+  errorHandler,
+  AppError,
+} from './errorHandler.middleware';
 import { validateBody } from './validateBody.middleware';
 
 export {
   errorHandler,
   validateBody,
-  HttpError,
+  AppError,
   authMiddleware,
   AuthenticatedRequest,
+  asyncHandler,
 };

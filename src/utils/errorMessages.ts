@@ -1,0 +1,18 @@
+export const ERROR_MESSAGES = {
+  INVALID_ACCESS: 'Acesso não autorizado',
+  INVALID_CREDENTIALS: 'Credenciais inválidas',
+  INVALID_TOKEN: 'Token inválido ou expirado',
+  INVALID_REFRESH_TOKEN: 'Refresh token inválido ou expirado',
+  USER_NOT_FOUND: 'Usuário não encontrado',
+  INTERNAL_SERVER_ERROR: 'Internal Server Error',
+  EMAIL_ALREADY_EXISTS: 'E-mail já cadastrado',
+  VALIDATION: 'Erro de validação',
+  INVALID_ID_TYPE: 'ID malformado ou tipo inválido',
+  DUPLICATE_KEY: 'Chave duplicada',
+  DOCUMENT_NOT_FOUND: 'Documento não encontrado',
+  SCHEMA_NOT_FOUND: 'Schema não encontrado para o model',
+  OVERWRITE_MODEL_ERROR: 'Model já foi registrado anteriormente',
+  MONGO_NETWORK_ERROR: 'Erro de rede ao conectar com Banco de Dados',
+  REGISTER_ERROR: 'Erro ao registrar dado',
+  SAVE_CREATE: 'Erro ao salvar ou criar dado',
+};

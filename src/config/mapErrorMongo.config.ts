@@ -1,30 +1,45 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
-import { HttpError } from '../middlewares';
+import { AppError } from '../middlewares';
+import { ERROR_MESSAGES } from '../utils';
 
 export function getErrorMongo(e: any, defaultMensage?: string): never {
   if (e instanceof mongoose.Error.CastError) {
-    throw new HttpError('ID malformado ou tipo inválido', 400);
+    throw new AppError(400, ERROR_MESSAGES.INVALID_ID_TYPE, {
+      name: 'DatabaseError',
+    });
   }
 
   if (e.code === 11000) {
-    throw new HttpError('Chave duplicada', 409);
+    throw new AppError(409, ERROR_MESSAGES.DUPLICATE_KEY, {
+      name: 'DatabaseError',
+    });
   }
 
   if (e instanceof mongoose.Error.DocumentNotFoundError) {
-    throw new HttpError('Documento não encontrado', 404);
+    throw new AppError(404, ERROR_MESSAGES.DOCUMENT_NOT_FOUND, {
+      name: 'DatabaseError',
+    });
   }
 
   if (e instanceof mongoose.Error.MissingSchemaError) {
-    throw new HttpError('Schema não encontrado para o model', 500);
+    throw new AppError(500, ERROR_MESSAGES.SCHEMA_NOT_FOUND, {
+      name: 'DatabaseError',
+    });
   }
 
   if (e instanceof mongoose.Error.OverwriteModelError) {
-    throw new HttpError('Model já foi registrado anteriormente', 500);
+    throw new AppError(500, ERROR_MESSAGES.OVERWRITE_MODEL_ERROR, {
+      name: 'DatabaseError',
+    });
   }
 
   if (e.name === 'MongoNetworkError') {
-    throw new HttpError('Erro de rede ao conectar com MongoDB', 503);
+    throw new AppError(503, ERROR_MESSAGES.MONGO_NETWORK_ERROR, {
+      name: 'DatabaseError',
+    });
   }
-  throw new HttpError(defaultMensage || 'Erro ao registar dado', 500);
+  throw new AppError(500, defaultMensage || ERROR_MESSAGES.REGISTER_ERROR, {
+    name: 'DatabaseError',
+  });
 }

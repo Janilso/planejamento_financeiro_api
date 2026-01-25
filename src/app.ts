@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(authRoutes);
 app.use(balanceRoutes);
 
-// Global error handler (should be after routes)
+// Global error handler
 app.use(errorHandler);
 
 export default app;

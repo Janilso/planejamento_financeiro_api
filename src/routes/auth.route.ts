@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { validateBody } from '../middlewares';
+import { asyncHandler, validateBody } from '../middlewares';
 import { AuthController } from '../controllers';
 import { environment } from '../config';
 import { AuthSchema } from '../schemas';
@@ -10,12 +10,12 @@ const authController = new AuthController(environment.googleClientId);
 authRoutes.post(
   '/auth/login',
   validateBody(AuthSchema.login),
-  authController.login.bind(authController),
+  asyncHandler(authController.login.bind(authController)),
 );
 authRoutes.post(
   '/auth/refresh',
   validateBody(AuthSchema.refresh),
-  authController.refresh.bind(authController),
+  asyncHandler(authController.refresh.bind(authController)),
 );
 
 export default authRoutes;

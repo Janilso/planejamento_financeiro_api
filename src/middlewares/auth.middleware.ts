@@ -1,5 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { environment, TokenConfig } from '../config';
+import { AppError } from './errorHandler.middleware';
+import { ERROR_MESSAGES } from '../utils';
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -15,20 +17,21 @@ export const authMiddleware = async (
   const token = req.headers.authorization;
 
   if (!token) {
-    return res.status(401).json({ error: 'Acesso não autorizado' });
+    throw new AppError(401, ERROR_MESSAGES.INVALID_ACCESS, {
+      name: 'ValidationError',
+    });
   }
 
   const tokenConfig = new TokenConfig();
 
   try {
-    const decoded = tokenConfig.verifyToken(
-      token,
-      environment.jwtSecretKey,
-    ) as { id: string };
+    const decoded = tokenConfig.verifyToken(token, environment.jwtSecretKey);
 
     req.user = { id: decoded?.id?.toString() };
     next();
   } catch {
-    return res.status(403).json({ message: 'Token inválido ou expirado' });
+    throw new AppError(403, ERROR_MESSAGES.INVALID_TOKEN, {
+      name: 'AuthError',
+    });
   }
 };

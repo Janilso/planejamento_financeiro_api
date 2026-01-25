@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { StringValue } from 'ms';
 
 class TokenConfig {
@@ -7,8 +7,8 @@ class TokenConfig {
       expiresIn,
     });
   }
-  verifyToken(token: string, key: string) {
-    return jwt.verify(token, key);
+  verifyToken<T>(token: string, key: string) {
+    return jwt.verify(token, key) as JwtPayload & T;
   }
 }
 
