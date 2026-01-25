@@ -2,9 +2,9 @@ import { Model } from 'mongoose';
 import { getErrorMongo } from '../config';
 import { BalanceBaseType, BalanceDocument, BalanceType } from '../models';
 import { addMonths } from 'date-fns';
-import { dateToMonthYear } from '../utils';
 import { GetBalanceResponse, GetBalancesType } from './types';
 import { BalanceLean } from '../models/balance.model';
+import { dateToMonthYear } from '../utils';
 
 class BalanceService {
   constructor(private readonly balanceModel: Model<BalanceDocument>) {}
