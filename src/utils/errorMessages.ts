@@ -15,4 +15,6 @@ export const ERROR_MESSAGES = {
   MONGO_NETWORK_ERROR: 'Erro de rede ao conectar com Banco de Dados',
   REGISTER_ERROR: 'Erro ao registrar dado',
   SAVE_CREATE: 'Erro ao salvar ou criar dado',
+  INVALID_JSON: 'JSON inválido',
+  ROUTE_NOT_FOUND: 'Rota não encontrada',
 };

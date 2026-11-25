@@ -43,6 +43,16 @@ export const errorHandler = (
     });
   }
 
+  // Corpo que não é JSON válido (erro do body-parser do express.json()).
+  if ((err as { type?: string }).type === 'entity.parse.failed') {
+    return res.status(400).json({
+      name: 'ValidationError',
+      code: 400,
+      message: ERROR_MESSAGES.INVALID_JSON,
+      errors: [],
+    });
+  }
+
   res.status(500).json({
     name: 'InternalServerError',
     code: 500,

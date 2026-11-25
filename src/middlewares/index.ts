@@ -6,3 +6,4 @@ export {
   AppError,
 } from './errorHandler.middleware';
 export { validateBody } from './validateBody.middleware';
+export { notFoundHandler } from './notFound.middleware';
