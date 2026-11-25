@@ -17,6 +17,13 @@ class AuthService {
 
   async login(googleToken: string) {
     const dataUser = await this.validateGoogleToken(googleToken);
+    // O upsert não roda os validators do model: sem esta checagem, o usuário
+    // seria gravado sem e-mail ou sem nome.
+    if (!dataUser?.email || !dataUser?.name) {
+      throw new AppError(401, ERROR_MESSAGES.INVALID_ACCESS, {
+        name: 'AuthError',
+      });
+    }
 
     const userCreated = await this.saveOrCreateUser(dataUser);
     const payloadToken = { id: userCreated?.id?.toString() };
