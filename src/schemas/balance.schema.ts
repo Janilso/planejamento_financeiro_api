@@ -2,7 +2,7 @@ import z from 'zod';
 
 class BalanceSchema {
   static readonly create = z.object({
-    name: z.string().min(1, 'Parâmetro obrigatório.'),
+    name: z.string().trim().min(1, 'Parâmetro obrigatório.'),
     value: z.number().min(1, 'Valor deve ser maior que zero'),
     realized: z.boolean().optional(),
     type: z.string().min(1, 'Parâmetro obrigatório.'),

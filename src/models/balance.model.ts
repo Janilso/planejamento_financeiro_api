@@ -39,7 +39,7 @@ const BalanceInstallmentSchema = new Schema<BalanceBaseType>(
 
 const BalanceSchema = new Schema({
   userId: { type: String, required: true },
-  name: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
   value: { type: Number, required: true },
   realized: Boolean,
   type: { type: String, required: true },
@@ -50,6 +50,10 @@ const BalanceSchema = new Schema({
   updatedAt: String,
   listInstallments: { type: [BalanceInstallmentSchema], default: [] },
 });
+
+// O nome só se repete entre usuários diferentes. Bancos que ainda têm o índice
+// antigo name_1 precisam do `npm run db:migrate -- --apply`.
+BalanceSchema.index({ userId: 1, name: 1 }, { unique: true });
 
 export const BalanceModel = mongoose.model<BalanceDocument>(
   'Balance',

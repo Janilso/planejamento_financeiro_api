@@ -41,3 +41,11 @@ describe('createdAt', () => {
     expect(segundo.createdAt).toBe('2030-02-01T00:00:00.000Z');
   });
 });
+
+describe('índices', () => {
+  it('índice único é composto por userId e name', () => {
+    expect(BalanceModel.schema.indexes()).toEqual([
+      [{ userId: 1, name: 1 }, { unique: true }],
+    ]);
+  });
+});

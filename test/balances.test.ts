@@ -122,3 +122,44 @@ describe('/balances', () => {
     expect(res.body).toEqual({});
   });
 });
+
+describe('nome do lançamento', () => {
+  it('usuários diferentes podem usar o mesmo nome', async () => {
+    const resA = await createBalance(tokenA);
+    const resB = await createBalance(tokenB);
+
+    expect(resA.status).toBe(201);
+    expect(resB.status).toBe(201);
+  });
+
+  it('o mesmo usuário não pode repetir um nome', async () => {
+    await createBalance(tokenA);
+
+    const res = await createBalance(tokenA);
+
+    expect(res.status).toBe(409);
+    expect(res.body).toEqual({
+      name: 'DatabaseError',
+      code: 409,
+      message: 'Chave duplicada',
+      errors: [],
+    });
+  });
+
+  it('nome com espaços nas pontas conta como o mesmo nome', async () => {
+    await createBalance(tokenA);
+
+    const res = await createBalance(tokenA, { name: '  Aluguel ' });
+
+    expect(res.status).toBe(409);
+  });
+
+  it('nome só com espaços responde 400', async () => {
+    const res = await createBalance(tokenA, { name: '   ' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.errors).toEqual([
+      { field: 'name', message: 'Parâmetro obrigatório.' },
+    ]);
+  });
+});
