@@ -59,6 +59,36 @@ describe('POST /auth/login', () => {
 
     expect(await UserModel.countDocuments()).toBe(1);
   });
+
+  it('payload sem e-mail responde 401 e não grava usuário', async () => {
+    mockGoogle({ name: 'Sem Email' });
+
+    const res = await api.post('/auth/login').send({ googleToken: 'x' });
+
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({
+      name: 'AuthError',
+      code: 401,
+      message: 'Acesso não autorizado',
+      errors: [],
+    });
+    expect(await UserModel.countDocuments()).toBe(0);
+  });
+
+  it('payload sem nome responde 401 e não grava usuário', async () => {
+    mockGoogle({ email: 'sem-nome@exemplo.com' });
+
+    const res = await api.post('/auth/login').send({ googleToken: 'x' });
+
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({
+      name: 'AuthError',
+      code: 401,
+      message: 'Acesso não autorizado',
+      errors: [],
+    });
+    expect(await UserModel.countDocuments()).toBe(0);
+  });
 });
 
 describe('POST /auth/refresh', () => {
