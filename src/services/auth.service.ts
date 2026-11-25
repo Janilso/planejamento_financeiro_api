@@ -49,7 +49,7 @@ class AuthService {
       const tokenConfig = new TokenConfig();
       const decoded = tokenConfig.verifyToken(
         prevRefreshToken,
-        environment.jwtRefrashSecretKey,
+        environment.jwtRefreshSecretKey,
       );
 
       if (decoded?.id !== user?.id?.toString()) {
@@ -78,7 +78,7 @@ class AuthService {
     );
     const refreshToken = tokenConfig.generateToken(
       payloadToken,
-      environment.jwtRefrashSecretKey,
+      environment.jwtRefreshSecretKey,
       '15d',
     );
     return { token, refreshToken };
