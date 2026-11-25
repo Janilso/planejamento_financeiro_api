@@ -90,7 +90,7 @@ class AuthService {
       const userCreated = await this.userModel.findOneAndUpdate(
         { email: user?.email },
         { $set: user },
-        { upsert: true, new: true },
+        { upsert: true, returnDocument: 'after' },
       );
 
       return userCreated;

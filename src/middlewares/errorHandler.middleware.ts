@@ -29,7 +29,8 @@ export const errorHandler = (
   err: AppError,
   req: Request,
   res: Response,
-  next: NextFunction,
+  // O Express só reconhece error handlers com 4 parâmetros.
+  _next: NextFunction,
 ) => {
   console.error('errorHandler', err);
 
