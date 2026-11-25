@@ -10,6 +10,16 @@ export function getErrorMongo(e: any, defaultMensage?: string): never {
     });
   }
 
+  if (e instanceof mongoose.Error.ValidationError) {
+    throw new AppError(400, ERROR_MESSAGES.VALIDATION, {
+      name: 'ValidationError',
+      errors: Object.entries(e.errors).map(([field, err]) => ({
+        field,
+        message: err.message,
+      })),
+    });
+  }
+
   if (e.code === 11000) {
     throw new AppError(409, ERROR_MESSAGES.DUPLICATE_KEY, {
       name: 'DatabaseError',

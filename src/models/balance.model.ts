@@ -38,14 +38,14 @@ const BalanceInstallmentSchema = new Schema<BalanceBaseType>(
 );
 
 const BalanceSchema = new Schema({
-  userId: { type: String, require: true },
-  name: { type: String, require: true, unique: true },
-  value: { type: Number, require: true },
+  userId: { type: String, required: true },
+  name: { type: String, required: true, unique: true },
+  value: { type: Number, required: true },
   realized: Boolean,
-  type: { type: String, require: true },
-  installment: { type: Number, require: true },
+  type: { type: String, required: true },
+  installment: { type: Number, required: true },
   totalInstallments: { type: Number, default: 0 },
-  date: { type: String, require: true },
+  date: { type: String, required: true },
   createdAt: { type: String, default: new Date().toISOString() },
   updatedAt: String,
   listInstallments: { type: [BalanceInstallmentSchema], default: [] },

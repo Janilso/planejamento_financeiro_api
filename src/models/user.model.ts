@@ -10,8 +10,8 @@ export type UserType = {
 export interface UserDocument extends UserType, Document {}
 
 const UserSchema = new Schema({
-  name: { type: String, require: true },
-  email: { type: String, require: true, unique: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   picture: String,
   refreshToken: String,
 });
