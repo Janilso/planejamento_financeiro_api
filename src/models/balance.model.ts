@@ -46,7 +46,7 @@ const BalanceSchema = new Schema({
   installment: { type: Number, required: true },
   totalInstallments: { type: Number, default: 0 },
   date: { type: String, required: true },
-  createdAt: { type: String, default: new Date().toISOString() },
+  createdAt: { type: String, default: () => new Date().toISOString() },
   updatedAt: String,
   listInstallments: { type: [BalanceInstallmentSchema], default: [] },
 });
