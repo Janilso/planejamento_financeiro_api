@@ -5,7 +5,9 @@ class BalanceSchema {
     name: z.string().trim().min(1, 'Parâmetro obrigatório.'),
     value: z.number().positive('Valor deve ser maior que zero'),
     realized: z.boolean().default(false),
-    type: z.string().min(1, 'Parâmetro obrigatório.'),
+    type: z.enum(['gains', 'expenses'], {
+      error: 'Tipo deve ser gains ou expenses.',
+    }),
     installment: z.number().min(1, 'Valor deve ser maior que zero'),
     totalInstallments: z.number().optional().nullable().default(0),
     date: z.coerce.date().min(1, 'Parâmetro obrigatório.'),

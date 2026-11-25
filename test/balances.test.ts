@@ -195,4 +195,13 @@ describe('contrato do POST /balances', () => {
       { field: 'value', message: 'Valor deve ser maior que zero' },
     ]);
   });
+
+  it('recusa type fora de gains e expenses', async () => {
+    const res = await createBalance(tokenA, { type: 'qualquer' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.errors).toEqual([
+      { field: 'type', message: 'Tipo deve ser gains ou expenses.' },
+    ]);
+  });
 });
