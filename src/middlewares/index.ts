@@ -1,16 +1,8 @@
-import { authMiddleware, AuthenticatedRequest } from './auth.middleware';
-import {
+export { authMiddleware } from './auth.middleware';
+export type { AuthenticatedRequest } from './auth.middleware';
+export {
   asyncHandler,
   errorHandler,
   AppError,
 } from './errorHandler.middleware';
-import { validateBody } from './validateBody.middleware';
-
-export {
-  errorHandler,
-  validateBody,
-  AppError,
-  authMiddleware,
-  AuthenticatedRequest,
-  asyncHandler,
-};
+export { validateBody } from './validateBody.middleware';

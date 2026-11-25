@@ -1,7 +1,8 @@
-export {
-  BalanceModel,
+export { BalanceModel } from './balance.model';
+export type {
   BalanceType,
   BalanceBaseType,
   BalanceDocument,
 } from './balance.model';
-export { UserModel, UserType, UserDocument } from './user.model';
+export { UserModel } from './user.model';
+export type { UserType, UserDocument } from './user.model';
