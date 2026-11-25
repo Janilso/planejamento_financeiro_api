@@ -31,7 +31,7 @@ describe('/balances', () => {
 
     expect(res.status).toBe(401);
     expect(res.body).toEqual({
-      name: 'ValidationError',
+      name: 'AuthError',
       code: 401,
       message: 'Acesso não autorizado',
       errors: [],

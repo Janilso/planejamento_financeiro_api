@@ -14,11 +14,12 @@ export const authMiddleware = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const token = req.headers.authorization;
+  // Aceita "Bearer <token>" e, por compatibilidade, o token cru.
+  const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
 
   if (!token) {
     throw new AppError(401, ERROR_MESSAGES.INVALID_ACCESS, {
-      name: 'ValidationError',
+      name: 'AuthError',
     });
   }
 

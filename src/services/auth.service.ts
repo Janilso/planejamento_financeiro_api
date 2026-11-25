@@ -19,7 +19,11 @@ class AuthService {
     const dataUser = await this.validateGoogleToken(googleToken);
     // O upsert não roda os validators do model: sem esta checagem, o usuário
     // seria gravado sem e-mail ou sem nome.
-    if (!dataUser?.email || !dataUser?.name) {
+    if (
+      !dataUser?.email ||
+      !dataUser?.name ||
+      dataUser.email_verified === false
+    ) {
       throw new AppError(401, ERROR_MESSAGES.INVALID_ACCESS, {
         name: 'AuthError',
       });
@@ -42,7 +46,9 @@ class AuthService {
       refreshToken: prevRefreshToken,
     });
     if (!user) {
-      throw new AppError(401, ERROR_MESSAGES.INVALID_REFRESH_TOKEN);
+      throw new AppError(401, ERROR_MESSAGES.INVALID_REFRESH_TOKEN, {
+        name: 'AuthError',
+      });
     }
 
     try {
@@ -53,7 +59,9 @@ class AuthService {
       );
 
       if (decoded?.id !== user?.id?.toString()) {
-        throw new AppError(401, ERROR_MESSAGES.INVALID_REFRESH_TOKEN);
+        throw new AppError(401, ERROR_MESSAGES.INVALID_REFRESH_TOKEN, {
+          name: 'AuthError',
+        });
       }
       const { token, refreshToken } = this.generateTokenAndRefreshToken({
         id: user?.id,
@@ -65,7 +73,20 @@ class AuthService {
     } catch {
       user.refreshToken = '';
       await this.saveRefreshTokenInUser(user);
-      throw new AppError(401, ERROR_MESSAGES.INVALID_REFRESH_TOKEN);
+      throw new AppError(401, ERROR_MESSAGES.INVALID_REFRESH_TOKEN, {
+        name: 'AuthError',
+      });
+    }
+  }
+
+  async logout(userId: string) {
+    try {
+      await this.userModel.updateOne(
+        { _id: userId },
+        { $set: { refreshToken: '' } },
+      );
+    } catch (error) {
+      getErrorMongo(error, ERROR_MESSAGES.SAVE_CREATE);
     }
   }
 
