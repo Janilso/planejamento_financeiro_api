@@ -163,3 +163,20 @@ describe('nome do lançamento', () => {
     ]);
   });
 });
+
+describe('contrato do POST /balances', () => {
+  it('parcelado sem realized grava as parcelas como não realizadas', async () => {
+    const res = await createBalance(tokenA, {
+      name: 'TV',
+      value: 300,
+      totalInstallments: 3,
+      realized: undefined,
+    });
+
+    expect(res.status).toBe(201);
+    expect(res.body.realized).toBe(false);
+    expect(
+      res.body.listInstallments.map((i: Installment) => i.realized),
+    ).toEqual([false, false, false]);
+  });
+});

@@ -4,7 +4,7 @@ class BalanceSchema {
   static readonly create = z.object({
     name: z.string().trim().min(1, 'Parâmetro obrigatório.'),
     value: z.number().min(1, 'Valor deve ser maior que zero'),
-    realized: z.boolean().optional(),
+    realized: z.boolean().default(false),
     type: z.string().min(1, 'Parâmetro obrigatório.'),
     installment: z.number().min(1, 'Valor deve ser maior que zero'),
     totalInstallments: z.number().optional().nullable().default(0),
