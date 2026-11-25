@@ -55,10 +55,16 @@ class BalanceService {
 
   private generateListInstallments(balance: BalanceType): BalanceBaseType[] {
     if (balance?.totalInstallments > 1) {
-      return Array.from({ length: balance?.totalInstallments })?.map((_, i) => {
+      const total = balance.totalInstallments;
+      // Divide em centavos; o resto da divisão vai para a última parcela.
+      const cents = Math.round(balance.value * 100);
+      const baseCents = Math.floor(cents / total);
+      const lastCents = cents - baseCents * (total - 1);
+
+      return Array.from({ length: total }).map((_, i) => {
         const installment = i + 1;
         const date = addMonths(new Date(balance?.date), i).toISOString();
-        const value = balance?.value / balance?.totalInstallments;
+        const value = (installment === total ? lastCents : baseCents) / 100;
 
         const installmentObj: BalanceBaseType = {
           userId: balance?.userId,

@@ -206,3 +206,48 @@ describe('contrato do POST /balances', () => {
     ]);
   });
 });
+
+describe('parcelas', () => {
+  it('recusa mais de 30 parcelas', async () => {
+    const res = await createBalance(tokenA, { totalInstallments: 31 });
+
+    expect(res.status).toBe(400);
+    expect(res.body.errors[0]).toEqual({
+      field: 'totalInstallments',
+      message: 'Máximo de 30 parcelas.',
+    });
+  });
+
+  it('recusa número de parcelas fracionado', async () => {
+    const total = await createBalance(tokenA, { totalInstallments: 2.5 });
+    const installment = await createBalance(tokenA, {
+      name: 'Outro',
+      installment: 1.5,
+    });
+
+    expect(total.status).toBe(400);
+    expect(installment.status).toBe(400);
+  });
+
+  it('divide em centavos e põe o resto na última parcela', async () => {
+    const res = await createBalance(tokenA, {
+      name: 'TV',
+      value: 100,
+      totalInstallments: 3,
+    });
+
+    expect(res.status).toBe(201);
+    expect(res.body.listInstallments.map((i: Installment) => i.value)).toEqual([
+      33.33, 33.33, 33.34,
+    ]);
+  });
+
+  it('recusa valor abaixo de um centavo', async () => {
+    const res = await createBalance(tokenA, { value: 0.001 });
+
+    expect(res.status).toBe(400);
+    expect(res.body.errors).toEqual([
+      { field: 'value', message: 'Valor deve ser maior que zero' },
+    ]);
+  });
+});
