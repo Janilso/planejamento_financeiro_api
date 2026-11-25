@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p test",
     "lint": "eslint 'src/**/*.ts' 'test/**/*.ts' vitest.config.mts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:migrate": "tsx src/migrations/run.ts"
   },
   "keywords": [],
   "author": "",
