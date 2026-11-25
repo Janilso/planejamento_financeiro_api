@@ -98,7 +98,7 @@ describe('/balances', () => {
 
     const res = await api.get('/balances').set('Authorization', tokenA);
 
-    expect(res.status).toBe(201); // comportamento atual; a Task 7 corrige para 200
+    expect(res.status).toBe(200);
     expect(Object.keys(res.body).sort()).toEqual([
       'FEV/26',
       'JAN/26',
@@ -119,6 +119,7 @@ describe('/balances', () => {
 
     const res = await api.get('/balances').set('Authorization', tokenA);
 
+    expect(res.status).toBe(200);
     expect(res.body).toEqual({});
   });
 });

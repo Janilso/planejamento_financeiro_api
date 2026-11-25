@@ -30,7 +30,7 @@ class BalanceController {
   async get(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const data = await this.balanceService.getAllByUserId(req.user?.id || '');
-      return res.status(201).json(data);
+      return res.status(200).json(data);
     } catch (error) {
       next(error);
     }
