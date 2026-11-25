@@ -179,4 +179,20 @@ describe('contrato do POST /balances', () => {
       res.body.listInstallments.map((i: Installment) => i.realized),
     ).toEqual([false, false, false]);
   });
+
+  it('aceita valor menor que 1', async () => {
+    const res = await createBalance(tokenA, { value: 0.5 });
+
+    expect(res.status).toBe(201);
+    expect(res.body.value).toBe(0.5);
+  });
+
+  it.each([0, -10])('recusa valor zero ou negativo: %d', async (value) => {
+    const res = await createBalance(tokenA, { value });
+
+    expect(res.status).toBe(400);
+    expect(res.body.errors).toEqual([
+      { field: 'value', message: 'Valor deve ser maior que zero' },
+    ]);
+  });
 });
