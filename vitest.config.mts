@@ -14,6 +14,7 @@ export default defineConfig({
       GOOGLE_CLIENT_ID: 'test-client-id',
       RATE_LIMIT_AUTH_MAX: '10000', // a suíte faz muitos logins seguidos
       RATE_LIMIT_API_MAX: '10000',
+      LOG_LEVEL: 'silent', // sem log de requisição na saída dos testes
     },
   },
 });

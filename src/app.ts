@@ -1,7 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import { z } from 'zod';
-import { environment } from './config';
+import { createHttpLogger, environment } from './config';
 import { createLimiter, errorHandler, notFoundHandler } from './middlewares';
 import { authRoutes, balanceRoutes } from './routes';
 
@@ -15,6 +15,7 @@ if (environment.trustProxy > 0) {
   app.set('trust proxy', environment.trustProxy);
 }
 
+app.use(createHttpLogger());
 app.use(helmet());
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000;

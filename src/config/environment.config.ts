@@ -17,6 +17,9 @@ const EnvironmentSchema = z.object({
   RATE_LIMIT_API_MAX: z.coerce.number().int().positive().default(300),
   // Quantos proxies confiáveis há na frente da API (0 = nenhum).
   TRUST_PROXY: z.coerce.number().int().min(0).default(0),
+  LOG_LEVEL: z
+    .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
+    .default('info'),
 });
 
 export type Environment = {
@@ -29,6 +32,7 @@ export type Environment = {
   rateLimitAuthMax: number;
   rateLimitApiMax: number;
   trustProxy: number;
+  logLevel: string;
 };
 
 // Falha na subida, com a lista do que falta, em vez de quebrar no meio de uma requisição.
@@ -52,6 +56,7 @@ export function loadEnvironment(env: NodeJS.ProcessEnv): Environment {
     rateLimitAuthMax: e.RATE_LIMIT_AUTH_MAX,
     rateLimitApiMax: e.RATE_LIMIT_API_MAX,
     trustProxy: e.TRUST_PROXY,
+    logLevel: e.LOG_LEVEL,
   };
 }
 
