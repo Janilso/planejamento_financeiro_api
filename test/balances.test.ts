@@ -114,6 +114,26 @@ describe('/balances', () => {
     expect(res.body['FEV/26'].expenses[0].installment).toBe(2);
   });
 
+  it('agrupa pelo mês de São Paulo', async () => {
+    // 01/03 às 02:00 UTC ainda é 28/02 às 23:00 em São Paulo.
+    await createBalance(tokenA, { date: '2026-03-01T02:00:00.000Z' });
+
+    const res = await api.get('/balances').set('Authorization', tokenA);
+
+    expect(Object.keys(res.body)).toEqual(['FEV/26']);
+  });
+
+  it('parcelas mantêm o dia no calendário de São Paulo', async () => {
+    // 31/03 às 02:00 UTC é 30/03 às 23:00 em São Paulo: a 2ª parcela vence
+    // em 30/04 às 23:00 de São Paulo (01/05 em UTC), não em 29/04.
+    const res = await createBalance(tokenA, {
+      date: '2026-03-31T02:00:00.000Z',
+      totalInstallments: 2,
+    });
+
+    expect(res.body.listInstallments[1].date).toBe('2026-05-01T02:00:00.000Z');
+  });
+
   it('GET de usuário sem lançamentos devolve {}', async () => {
     await createBalance(tokenB);
 

@@ -2,10 +2,11 @@ import { Model } from 'mongoose';
 import { getErrorMongo } from '../config';
 import { AppError } from '../middlewares';
 import { BalanceBaseType, BalanceDocument, BalanceType } from '../models';
+import { tz } from '@date-fns/tz';
 import { addMonths } from 'date-fns';
 import { BalanceChanges, GetBalanceResponse, GetBalancesType } from './types';
 import { BalanceLean } from '../models/balance.model';
-import { dateToMonthYear, ERROR_MESSAGES } from '../utils';
+import { APP_TIME_ZONE, dateToMonthYear, ERROR_MESSAGES } from '../utils';
 
 class BalanceService {
   constructor(private readonly balanceModel: Model<BalanceDocument>) {}
@@ -234,7 +235,12 @@ class BalanceService {
 
       return Array.from({ length: total }).map((_, i) => {
         const installment = i + 1;
-        const date = addMonths(new Date(balance?.date), i).toISOString();
+        // Soma os meses no calendário de São Paulo; a conversão volta para o
+        // formato ISO em UTC (…Z).
+        const inSaoPaulo = addMonths(new Date(balance?.date), i, {
+          in: tz(APP_TIME_ZONE),
+        });
+        const date = new Date(inSaoPaulo.getTime()).toISOString();
         const value = (installment === total ? lastCents : baseCents) / 100;
 
         const installmentObj: BalanceBaseType = {
