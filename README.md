@@ -16,6 +16,8 @@ npm install
 cp .env.example .env   # e preencha os valores
 ```
 
+Para desenvolver sem Atlas, use um MongoDB local: `npm run db:local` sobe o banco em segundo plano (dados em `~/mongo-dev`), e o `.env` fica com `MONGO_URI=mongodb://127.0.0.1:27017/planejamento_dev`. `npm run db:local -- stop` desliga. O script usa o `mongod` do PATH ou o binário que o `npm test` baixa.
+
 | Variável | Obrigatória | Para quê |
 |---|---|---|
 | `MONGO_URI` | sim | Conexão com o MongoDB |
@@ -43,6 +45,7 @@ Se faltar uma variável obrigatória, a API não sobe e o erro lista o que falta
 | `npm run db:migrate` | Migração de índices em dry-run: mostra o que mudaria e não altera nada |
 | `npm run db:migrate -- --apply` | Aplica a migração (veja [Dados](docs/dados.md)) |
 | `npm run token:dev -- <userId>` | Token de acesso para testar no Swagger |
+| `npm run db:local` | MongoDB local para desenvolvimento (`-- stop`, `-- status`) |
 
 O CI (`.github/workflows/ci.yml`) roda typecheck, lint, prettier, testes, build e `npm audit` em cada pull request.
 

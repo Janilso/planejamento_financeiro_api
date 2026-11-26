@@ -53,3 +53,4 @@ O `.env` nunca é versionado. Nos testes, o `vitest.config.mts` define todas as 
 | `npm run lint` | ESLint |
 | `npm run db:migrate` | Migração de índices em dry-run; `-- --apply` aplica (veja [Dados](dados.md)) |
 | `npm run token:dev -- <userId>` | Token de acesso para o Swagger (nunca em produção) |
+| `npm run db:local` | Sobe um MongoDB local para desenvolvimento (`-- stop` desliga, `-- status` mostra o estado) |

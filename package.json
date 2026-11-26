@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "db:migrate": "tsx src/migrations/run.ts",
-    "token:dev": "tsx src/scripts/devToken.cli.ts"
+    "token:dev": "tsx src/scripts/devToken.cli.ts",
+    "db:local": "tool/mongo-local.sh"
   },
   "keywords": [],
   "author": "",
