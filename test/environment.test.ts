@@ -23,6 +23,9 @@ describe('loadEnvironment', () => {
       googleClientId: 'c',
       jwtSecretKey: 'a',
       jwtRefreshSecretKey: 'b',
+      rateLimitAuthMax: 20,
+      rateLimitApiMax: 300,
+      trustProxy: 0,
     });
     expect(loadEnvironment({ ...minimo, PORT: '3000' }).port).toBe(3000);
   });

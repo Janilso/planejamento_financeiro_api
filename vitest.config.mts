@@ -12,6 +12,8 @@ export default defineConfig({
       JWT_SECRET_KEY: 'test-secret',
       JWT_REFRESH_SECRET_KEY: 'test-refresh-secret',
       GOOGLE_CLIENT_ID: 'test-client-id',
+      RATE_LIMIT_AUTH_MAX: '10000', // a suíte faz muitos logins seguidos
+      RATE_LIMIT_API_MAX: '10000',
     },
   },
 });

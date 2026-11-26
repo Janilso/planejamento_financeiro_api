@@ -12,6 +12,11 @@ const EnvironmentSchema = z.object({
   GOOGLE_CLIENT_ID: obrigatoria,
   JWT_SECRET_KEY: obrigatoria,
   JWT_REFRESH_SECRET_KEY: obrigatoria,
+  // Máximo de requisições por IP a cada 15 minutos.
+  RATE_LIMIT_AUTH_MAX: z.coerce.number().int().positive().default(20),
+  RATE_LIMIT_API_MAX: z.coerce.number().int().positive().default(300),
+  // Quantos proxies confiáveis há na frente da API (0 = nenhum).
+  TRUST_PROXY: z.coerce.number().int().min(0).default(0),
 });
 
 export type Environment = {
@@ -21,6 +26,9 @@ export type Environment = {
   mongoUri: string;
   jwtSecretKey: string;
   jwtRefreshSecretKey: string;
+  rateLimitAuthMax: number;
+  rateLimitApiMax: number;
+  trustProxy: number;
 };
 
 // Falha na subida, com a lista do que falta, em vez de quebrar no meio de uma requisição.
@@ -41,6 +49,9 @@ export function loadEnvironment(env: NodeJS.ProcessEnv): Environment {
     mongoUri: e.MONGO_URI,
     jwtSecretKey: e.JWT_SECRET_KEY,
     jwtRefreshSecretKey: e.JWT_REFRESH_SECRET_KEY,
+    rateLimitAuthMax: e.RATE_LIMIT_AUTH_MAX,
+    rateLimitApiMax: e.RATE_LIMIT_API_MAX,
+    trustProxy: e.TRUST_PROXY,
   };
 }
 

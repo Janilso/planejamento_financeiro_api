@@ -3,4 +3,5 @@ export type NameError =
   | 'ValidationError'
   | 'InternalServerError'
   | 'DatabaseError'
-  | 'NotFoundError';
+  | 'NotFoundError'
+  | 'RateLimitError';

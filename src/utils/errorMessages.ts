@@ -18,6 +18,7 @@ export const ERROR_MESSAGES = {
   SAVE_CREATE: 'Erro ao salvar ou criar dado',
   INVALID_JSON: 'JSON inválido',
   ROUTE_NOT_FOUND: 'Rota não encontrada',
+  TOO_MANY_REQUESTS: 'Muitas requisições. Tente de novo em alguns minutos.',
   BALANCE_NOT_FOUND: 'Lançamento não encontrado',
   INSTALLMENT_NOT_FOUND: 'Parcela não encontrada',
   NOTHING_TO_UPDATE: 'Nenhum campo para atualizar',

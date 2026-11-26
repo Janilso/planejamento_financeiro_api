@@ -8,3 +8,4 @@ export {
 export { validateBody } from './validateBody.middleware';
 export { notFoundHandler } from './notFound.middleware';
 export { validateParams } from './validateParams.middleware';
+export { createLimiter } from './rateLimit.middleware';
