@@ -9,7 +9,8 @@
     "lint": "eslint 'src/**/*.ts' 'test/**/*.ts' vitest.config.mts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:migrate": "tsx src/migrations/run.ts"
+    "db:migrate": "tsx src/migrations/run.ts",
+    "token:dev": "tsx src/scripts/devToken.cli.ts"
   },
   "keywords": [],
   "author": "",
@@ -29,14 +30,19 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.13.1",
     "pino-http": "^11.0.0",
+    "swagger-ui-express": "^5.0.1",
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@apidevtools/swagger-parser": "^13.1.0",
     "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.19.4",
     "@types/supertest": "^7.2.1",
+    "@types/swagger-ui-express": "^4.1.8",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "eslint": "^10.15.0",
     "globals": "^17.14.0",
     "jiti": "^2.7.0",
