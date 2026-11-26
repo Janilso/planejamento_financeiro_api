@@ -1,9 +1,13 @@
+import { createHash } from 'node:crypto';
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
-import { Document, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { environment, getErrorMongo, TokenConfig } from '../config';
 import { AppError } from '../middlewares';
 import { UserDocument } from '../models';
 import { ERROR_MESSAGES } from '../utils';
+
+const hashToken = (token: string) =>
+  createHash('sha256').update(token).digest('hex');
 
 class AuthService {
   private readonly googleClient: OAuth2Client;
@@ -35,15 +39,14 @@ class AuthService {
     const { token, refreshToken } =
       this.generateTokenAndRefreshToken(payloadToken);
 
-    userCreated.refreshToken = refreshToken;
-    await this.saveRefreshTokenInUser(userCreated);
+    await this.saveRefreshToken(userCreated.id, refreshToken);
 
     return { token, refreshToken };
   }
 
   async refresh(prevRefreshToken: string) {
     const user = await this.userModel.findOne({
-      refreshToken: prevRefreshToken,
+      refreshTokenHash: hashToken(prevRefreshToken),
     });
     if (!user) {
       throw new AppError(401, ERROR_MESSAGES.INVALID_REFRESH_TOKEN, {
@@ -66,13 +69,11 @@ class AuthService {
       const { token, refreshToken } = this.generateTokenAndRefreshToken({
         id: user?.id,
       });
-      user.refreshToken = refreshToken;
-      await this.saveRefreshTokenInUser(user);
+      await this.saveRefreshToken(user.id, refreshToken);
 
       return { token, refreshToken };
     } catch {
-      user.refreshToken = '';
-      await this.saveRefreshTokenInUser(user);
+      await this.saveRefreshToken(user.id, null);
       throw new AppError(401, ERROR_MESSAGES.INVALID_REFRESH_TOKEN, {
         name: 'AuthError',
       });
@@ -80,14 +81,7 @@ class AuthService {
   }
 
   async logout(userId: string) {
-    try {
-      await this.userModel.updateOne(
-        { _id: userId },
-        { $set: { refreshToken: '' } },
-      );
-    } catch (error) {
-      getErrorMongo(error, ERROR_MESSAGES.SAVE_CREATE);
-    }
+    await this.saveRefreshToken(userId, null);
   }
 
   private generateTokenAndRefreshToken<T extends object>(payloadToken: T) {
@@ -105,9 +99,22 @@ class AuthService {
     return { token, refreshToken };
   }
 
-  private async saveRefreshTokenInUser(user: Document) {
+  // Grava só o hash do refresh token (null revoga a sessão) e apaga o campo
+  // refreshToken, em texto puro, que as versões antigas gravavam.
+  private async saveRefreshToken(userId: string, refreshToken: string | null) {
     try {
-      await user.save();
+      await this.userModel.updateOne(
+        { _id: userId },
+        {
+          $set: {
+            refreshTokenHash: refreshToken ? hashToken(refreshToken) : '',
+          },
+          $unset: { refreshToken: 1 },
+        },
+        // Sem strict: false, o Mongoose descarta o $unset de um campo que não
+        // está mais no schema.
+        { strict: false },
+      );
     } catch (error) {
       getErrorMongo(error, 'Erro ao salvar token de atualização.');
     }

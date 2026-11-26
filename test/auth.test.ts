@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { UserModel } from '../src/models';
 import { api, makeToken, mockGoogle } from './helpers';
@@ -7,6 +8,9 @@ const ana = {
   name: 'Ana',
   picture: 'https://exemplo.com/ana.png',
 };
+
+const sha256 = (value: string) =>
+  createHash('sha256').update(value).digest('hex');
 
 function loginAna() {
   mockGoogle(ana);
@@ -57,8 +61,32 @@ describe('POST /auth/login', () => {
     expect(user).toMatchObject({
       name: 'Ana',
       picture: 'https://exemplo.com/ana.png',
-      refreshToken: res.body.refreshToken,
+      refreshTokenHash: sha256(res.body.refreshToken),
     });
+  });
+
+  it('guarda só o hash do refresh token', async () => {
+    const res = await loginAna();
+
+    const user = await UserModel.collection.findOne({
+      email: 'ana@exemplo.com',
+    });
+    expect(user?.refreshTokenHash).toBe(sha256(res.body.refreshToken));
+    expect(JSON.stringify(user)).not.toContain(res.body.refreshToken);
+  });
+
+  it('login apaga o refresh token em texto puro de versões antigas', async () => {
+    await UserModel.collection.insertOne({
+      ...ana,
+      refreshToken: 'token-antigo-em-texto-puro',
+    });
+
+    await loginAna();
+
+    const user = await UserModel.collection.findOne({
+      email: 'ana@exemplo.com',
+    });
+    expect(user).not.toHaveProperty('refreshToken');
   });
 
   it('login repetido com o mesmo e-mail não duplica o usuário', async () => {
@@ -118,7 +146,7 @@ describe('POST /auth/refresh', () => {
     expect(res.status).toBe(200);
     expect(Object.keys(res.body)).toEqual(['token', 'refreshToken']);
     const user = await UserModel.findOne({ email: 'ana@exemplo.com' }).lean();
-    expect(user?.refreshToken).toBe(res.body.refreshToken);
+    expect(user?.refreshTokenHash).toBe(sha256(res.body.refreshToken));
   });
 });
 
