@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { asyncHandler, validateBody } from '../middlewares';
+import { asyncHandler, authMiddleware, validateBody } from '../middlewares';
 import { AuthController } from '../controllers';
 import { environment } from '../config';
 import { AuthSchema } from '../schemas';
@@ -16,6 +16,11 @@ authRoutes.post(
   '/auth/refresh',
   validateBody(AuthSchema.refresh),
   asyncHandler(authController.refresh.bind(authController)),
+);
+authRoutes.post(
+  '/auth/logout',
+  authMiddleware,
+  asyncHandler(authController.logout.bind(authController)),
 );
 
 export default authRoutes;

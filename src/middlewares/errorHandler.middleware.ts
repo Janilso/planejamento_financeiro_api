@@ -32,9 +32,8 @@ export const errorHandler = (
   // O Express só reconhece error handlers com 4 parâmetros.
   _next: NextFunction,
 ) => {
-  console.error('errorHandler', err);
-
   if (err instanceof AppError) {
+    if (err.statusCode >= 500) req.log.error({ err });
     return res.status(err.statusCode).json({
       name: err.name,
       code: err.statusCode,
@@ -43,6 +42,17 @@ export const errorHandler = (
     });
   }
 
+  // Corpo que não é JSON válido (erro do body-parser do express.json()).
+  if ((err as { type?: string }).type === 'entity.parse.failed') {
+    return res.status(400).json({
+      name: 'ValidationError',
+      code: 400,
+      message: ERROR_MESSAGES.INVALID_JSON,
+      errors: [],
+    });
+  }
+
+  req.log.error({ err });
   res.status(500).json({
     name: 'InternalServerError',
     code: 500,

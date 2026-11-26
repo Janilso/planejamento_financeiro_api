@@ -4,12 +4,12 @@ import { BalanceModel } from '../models';
 export type BalanceIndexMigrationReport = {
   toDrop: IndexesDiff['toDrop'];
   toCreate: IndexesDiff['toCreate'];
-  duplicates: { userId: string; name: string; count: number }[];
+  duplicates: { userId: string | null; name: string | null; count: number }[];
   applied: boolean;
 };
 
 type DuplicateGroup = {
-  _id: { userId: string; name: string };
+  _id: { userId: string | null; name: string | null };
   count: number;
 };
 
@@ -17,7 +17,12 @@ async function findDuplicateNames() {
   const groups = await BalanceModel.aggregate<DuplicateGroup>([
     {
       $group: {
-        _id: { userId: '$userId', name: '$name' },
+        // $ifNull junta campo ausente e null num grupo só: para o índice
+        // único, os dois contam como o mesmo valor.
+        _id: {
+          userId: { $ifNull: ['$userId', null] },
+          name: { $ifNull: ['$name', null] },
+        },
         count: { $sum: 1 },
       },
     },
@@ -53,6 +58,9 @@ export async function migrateBalanceIndexes(options: {
     );
   }
 
-  await BalanceModel.syncIndexes();
+  // Cria o índice novo antes de remover o antigo: se a criação falhar,
+  // o name_1 continua protegendo os dados.
+  await BalanceModel.createIndexes();
+  await BalanceModel.cleanIndexes();
   return { toDrop, toCreate, duplicates, applied: true };
 }

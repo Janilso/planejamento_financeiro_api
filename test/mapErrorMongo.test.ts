@@ -31,7 +31,7 @@ describe('getErrorMongo', () => {
       statusCode: 400,
       name: 'ValidationError',
       message: 'Erro de validação',
-      errors: [{ field: 'name', message: 'Path `name` is required.' }],
+      errors: [{ field: 'name', message: 'Campo obrigatório.' }],
     });
   });
 });

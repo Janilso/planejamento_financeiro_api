@@ -31,7 +31,7 @@ describe('/balances', () => {
 
     expect(res.status).toBe(401);
     expect(res.body).toEqual({
-      name: 'ValidationError',
+      name: 'AuthError',
       code: 401,
       message: 'Acesso não autorizado',
       errors: [],
@@ -112,6 +112,26 @@ describe('/balances', () => {
     ]);
     expect(res.body['FEV/26'].gains).toEqual([]);
     expect(res.body['FEV/26'].expenses[0].installment).toBe(2);
+  });
+
+  it('agrupa pelo mês de São Paulo', async () => {
+    // 01/03 às 02:00 UTC ainda é 28/02 às 23:00 em São Paulo.
+    await createBalance(tokenA, { date: '2026-03-01T02:00:00.000Z' });
+
+    const res = await api.get('/balances').set('Authorization', tokenA);
+
+    expect(Object.keys(res.body)).toEqual(['FEV/26']);
+  });
+
+  it('parcelas mantêm o dia no calendário de São Paulo', async () => {
+    // 31/03 às 02:00 UTC é 30/03 às 23:00 em São Paulo: a 2ª parcela vence
+    // em 30/04 às 23:00 de São Paulo (01/05 em UTC), não em 29/04.
+    const res = await createBalance(tokenA, {
+      date: '2026-03-31T02:00:00.000Z',
+      totalInstallments: 2,
+    });
+
+    expect(res.body.listInstallments[1].date).toBe('2026-05-01T02:00:00.000Z');
   });
 
   it('GET de usuário sem lançamentos devolve {}', async () => {
@@ -203,6 +223,51 @@ describe('contrato do POST /balances', () => {
     expect(res.status).toBe(400);
     expect(res.body.errors).toEqual([
       { field: 'type', message: 'Tipo deve ser gains ou expenses.' },
+    ]);
+  });
+});
+
+describe('parcelas', () => {
+  it('recusa mais de 30 parcelas', async () => {
+    const res = await createBalance(tokenA, { totalInstallments: 31 });
+
+    expect(res.status).toBe(400);
+    expect(res.body.errors[0]).toEqual({
+      field: 'totalInstallments',
+      message: 'Máximo de 30 parcelas.',
+    });
+  });
+
+  it('recusa número de parcelas fracionado', async () => {
+    const total = await createBalance(tokenA, { totalInstallments: 2.5 });
+    const installment = await createBalance(tokenA, {
+      name: 'Outro',
+      installment: 1.5,
+    });
+
+    expect(total.status).toBe(400);
+    expect(installment.status).toBe(400);
+  });
+
+  it('divide em centavos e põe o resto na última parcela', async () => {
+    const res = await createBalance(tokenA, {
+      name: 'TV',
+      value: 100,
+      totalInstallments: 3,
+    });
+
+    expect(res.status).toBe(201);
+    expect(res.body.listInstallments.map((i: Installment) => i.value)).toEqual([
+      33.33, 33.33, 33.34,
+    ]);
+  });
+
+  it('recusa valor abaixo de um centavo', async () => {
+    const res = await createBalance(tokenA, { value: 0.001 });
+
+    expect(res.status).toBe(400);
+    expect(res.body.errors).toEqual([
+      { field: 'value', message: 'Valor deve ser maior que zero' },
     ]);
   });
 });
