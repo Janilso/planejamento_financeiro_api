@@ -15,7 +15,10 @@ export function getErrorMongo(e: any, defaultMensage?: string): never {
       name: 'ValidationError',
       errors: Object.entries(e.errors).map(([field, err]) => ({
         field,
-        message: err.message,
+        message:
+          'kind' in err && err.kind === 'required'
+            ? ERROR_MESSAGES.REQUIRED_FIELD
+            : err.message,
       })),
     });
   }

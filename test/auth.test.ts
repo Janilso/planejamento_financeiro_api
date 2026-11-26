@@ -26,6 +26,14 @@ describe('POST /auth/login', () => {
     expect(res.body.errors[0].field).toBe('googleToken');
   });
 
+  it('sem googleToken explica em português', async () => {
+    const res = await api.post('/auth/login').send({});
+
+    expect(res.body.errors[0].message).toBe(
+      'Entrada inválida: esperava um texto, recebeu um valor "undefined"',
+    );
+  });
+
   it('token recusado pelo Google responde 401', async () => {
     mockGoogle(new Error('invalid'));
 

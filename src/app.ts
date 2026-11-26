@@ -1,6 +1,10 @@
 import express from 'express';
+import { z } from 'zod';
 import { errorHandler, notFoundHandler } from './middlewares';
 import { authRoutes, balanceRoutes } from './routes';
+
+// Mensagens padrão do zod em português.
+z.config(z.locales.pt());
 
 const app = express();
 

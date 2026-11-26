@@ -7,6 +7,7 @@ export const ERROR_MESSAGES = {
   INTERNAL_SERVER_ERROR: 'Internal Server Error',
   EMAIL_ALREADY_EXISTS: 'E-mail já cadastrado',
   VALIDATION: 'Erro de validação',
+  REQUIRED_FIELD: 'Campo obrigatório.',
   INVALID_ID_TYPE: 'ID malformado ou tipo inválido',
   DUPLICATE_KEY: 'Chave duplicada',
   DOCUMENT_NOT_FOUND: 'Documento não encontrado',
