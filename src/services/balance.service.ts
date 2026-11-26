@@ -50,15 +50,6 @@ class BalanceService {
     }
   }
 
-  async getById(id: string) {
-    try {
-      const balance = await this.balanceModel.findById(id).lean();
-      return balance;
-    } catch (error) {
-      getErrorMongo(error, 'Erro ao buscar ganho ou gasto');
-    }
-  }
-
   async update(userId: string, id: string, changes: BalanceChanges) {
     try {
       const balance = await this.findOwned(userId, id);

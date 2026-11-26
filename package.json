@@ -1,7 +1,6 @@
 {
   "name": "planejamento_financeiro_api",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
@@ -15,7 +14,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "API do Planejamento Financeiro: login com Google e lançamentos de ganhos e gastos mês a mês",
   "engines": {
     "node": ">=22"
   },
