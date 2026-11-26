@@ -2,6 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import { z } from 'zod';
 import { createHttpLogger, environment } from './config';
+import docsRoutes from './docs/docs.route';
 import { createLimiter, errorHandler, notFoundHandler } from './middlewares';
 import { authRoutes, balanceRoutes } from './routes';
 
@@ -39,6 +40,9 @@ app.use(express.json());
 // Routes
 app.use(authRoutes);
 app.use(balanceRoutes);
+
+// Documentação: Swagger UI em /docs e o spec em /docs/openapi.json
+app.use(docsRoutes);
 
 // Rota inexistente
 app.use(notFoundHandler);
