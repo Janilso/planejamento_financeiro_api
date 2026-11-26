@@ -17,4 +17,10 @@ export const ERROR_MESSAGES = {
   SAVE_CREATE: 'Erro ao salvar ou criar dado',
   INVALID_JSON: 'JSON inválido',
   ROUTE_NOT_FOUND: 'Rota não encontrada',
+  BALANCE_NOT_FOUND: 'Lançamento não encontrado',
+  INSTALLMENT_NOT_FOUND: 'Parcela não encontrada',
+  NOTHING_TO_UPDATE: 'Nenhum campo para atualizar',
+  TWO_DECIMALS: 'Use no máximo 2 casas decimais.',
+  MIN_PER_INSTALLMENT: 'Valor mínimo de R$ 0,01 por parcela.',
+  REALIZED_BY_INSTALLMENT: 'Em parcelados, marque o realizado em cada parcela.',
 };
