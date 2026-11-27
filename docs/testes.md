@@ -26,6 +26,7 @@ Vitest + supertest, com um **MongoDB em memória** (`mongodb-memory-server`). A 
 |---|---|
 | `auth.test.ts` | Login, refresh, logout, `Bearer`, hash do refresh, `email_verified` |
 | `balances.test.ts` | Criação, parcelas, centavos, fuso, agrupamento, nome único |
+| `compression.test.ts` | Resposta em gzip com `Accept-Encoding: gzip` e sem compressão com `identity` |
 | `balances-edit.test.ts` | Edição, realizado por parcela, exclusões, `totalValue` |
 | `errors.test.ts` | JSON malformado e rota inexistente |
 | `environment.test.ts` | Validação das variáveis e padrões |
@@ -55,6 +56,8 @@ Linha de base de 2026-11-27 (notebook, sem gzip, dados sintéticos):
 | leve | 504 | 10 ms | 12 ms | 98 KB | 7 KB | ✅ |
 | pesado | 3.724 | 66 ms | 69 ms | 724 KB | 53 KB | ❌ (rede) |
 | extremo | 8.400 | 183 ms | 227 ms | 1.632 KB | 113 KB | ❌ (rede, mesmo com gzip) |
+
+Com o gzip ligado (`compression()`), pedindo `Accept-Encoding: gzip`: `leve` 7 KB ✅, `pesado` 53 KB ✅ e `extremo` 113 KB ❌ (o critério é 100 KB).
 
 ## Padrões
 
