@@ -48,6 +48,14 @@ npm run perf
 - Nunca usa o `.env` nem o Atlas: o `MONGO_URI` vem do mesmo `mongodb-memory-server` da suíte.
 - Os números dependem da máquina: use-os para comparar antes e depois de uma mudança, na mesma máquina.
 
+Linha de base de 2026-11-27 (notebook, sem gzip, dados sintéticos):
+
+| Volume | Itens | Mediana | p90 | Resposta | Estimativa com gzip | Resultado |
+|---|---|---|---|---|---|---|
+| leve | 504 | 10 ms | 12 ms | 98 KB | 7 KB | ✅ |
+| pesado | 3.724 | 66 ms | 69 ms | 724 KB | 53 KB | ❌ (rede) |
+| extremo | 8.400 | 183 ms | 227 ms | 1.632 KB | 113 KB | ❌ (rede, mesmo com gzip) |
+
 ## Padrões
 
 - **TDD:** o teste vem antes e precisa falhar pelo motivo certo.
