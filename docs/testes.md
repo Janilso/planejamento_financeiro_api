@@ -36,6 +36,18 @@ Vitest + supertest, com um **MongoDB em memória** (`mongodb-memory-server`). A 
 | `logger.test.ts` | Token oculto nos logs |
 | `docs.test.ts` | Spec válido, cobertura das rotas, contrato das respostas, Swagger e `token:dev` |
 
+## Desempenho do GET /balances
+
+```sh
+npm run perf
+```
+
+`test/perf/get-balances.perf.ts` semeia históricos sintéticos de três tamanhos (`leve`: 1 ano, `pesado`: 5 anos com um mês de 150 lançamentos, `extremo`: 10 anos; o gerador está em `test/perf/volumes.ts`) num MongoDB em memória e chama o `GET /balances` por HTTP de verdade, com 3 requisições de aquecimento e 20 medidas, com e sem `Accept-Encoding: gzip`. Cada volume imprime uma linha com itens, mediana, p90, bytes na rede e a estimativa de gzip, e um ✅ ou ❌ pelo critério: mediana abaixo de 200 ms e no máximo 100 KB na rede.
+
+- Roda só com `npm run perf` (`vitest.perf.config.mts`, arquivos `*.perf.ts`); o `npm test` não o executa.
+- Nunca usa o `.env` nem o Atlas: o `MONGO_URI` vem do mesmo `mongodb-memory-server` da suíte.
+- Os números dependem da máquina: use-os para comparar antes e depois de uma mudança, na mesma máquina.
+
 ## Padrões
 
 - **TDD:** o teste vem antes e precisa falhar pelo motivo certo.

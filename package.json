@@ -6,9 +6,10 @@
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test",
-    "lint": "eslint 'src/**/*.ts' 'test/**/*.ts' vitest.config.mts",
+    "lint": "eslint 'src/**/*.ts' 'test/**/*.ts' vitest.config.mts vitest.perf.config.mts",
     "test": "vitest run",
     "test:watch": "vitest",
+    "perf": "vitest run --config vitest.perf.config.mts",
     "db:migrate": "tsx src/migrations/run.ts",
     "token:dev": "tsx src/scripts/devToken.cli.ts",
     "db:local": "tool/mongo-local.sh"
