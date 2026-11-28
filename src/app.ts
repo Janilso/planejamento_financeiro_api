@@ -1,3 +1,4 @@
+import compression from 'compression';
 import express from 'express';
 import helmet from 'helmet';
 import { z } from 'zod';
@@ -18,6 +19,8 @@ if (environment.trustProxy > 0) {
 
 app.use(createHttpLogger());
 app.use(helmet());
+// gzip quando o cliente aceita: o histórico cresce ~90 KB por ano.
+app.use(compression());
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
 app.use(

@@ -6,9 +6,10 @@
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test",
-    "lint": "eslint 'src/**/*.ts' 'test/**/*.ts' vitest.config.mts",
+    "lint": "eslint 'src/**/*.ts' 'test/**/*.ts' vitest.config.mts vitest.perf.config.mts",
     "test": "vitest run",
     "test:watch": "vitest",
+    "perf": "vitest run --config vitest.perf.config.mts",
     "db:migrate": "tsx src/migrations/run.ts",
     "token:dev": "tsx src/scripts/devToken.cli.ts",
     "db:local": "tool/mongo-local.sh"
@@ -22,6 +23,7 @@
   },
   "dependencies": {
     "@date-fns/tz": "^1.5.0",
+    "compression": "^1.8.2",
     "date-fns": "^4.4.0",
     "dotenv": "^18.0.10",
     "express": "^5.3.0",
@@ -37,6 +39,7 @@
   "devDependencies": {
     "@apidevtools/swagger-parser": "^13.1.0",
     "@eslint/js": "^10.0.1",
+    "@types/compression": "^1.8.1",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.19.4",

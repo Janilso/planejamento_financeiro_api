@@ -26,6 +26,7 @@ Vitest + supertest, com um **MongoDB em memória** (`mongodb-memory-server`). A 
 |---|---|
 | `auth.test.ts` | Login, refresh, logout, `Bearer`, hash do refresh, `email_verified` |
 | `balances.test.ts` | Criação, parcelas, centavos, fuso, agrupamento, nome único |
+| `compression.test.ts` | Resposta em gzip com `Accept-Encoding: gzip` e sem compressão com `identity` |
 | `balances-edit.test.ts` | Edição, realizado por parcela, exclusões, `totalValue` |
 | `errors.test.ts` | JSON malformado e rota inexistente |
 | `environment.test.ts` | Validação das variáveis e padrões |
@@ -35,6 +36,28 @@ Vitest + supertest, com um **MongoDB em memória** (`mongodb-memory-server`). A 
 | `security.test.ts` / `rate-limit.test.ts` | Cabeçalhos do helmet / limite de login |
 | `logger.test.ts` | Token oculto nos logs |
 | `docs.test.ts` | Spec válido, cobertura das rotas, contrato das respostas, Swagger e `token:dev` |
+
+## Desempenho do GET /balances
+
+```sh
+npm run perf
+```
+
+`test/perf/get-balances.perf.ts` semeia históricos sintéticos de três tamanhos (`leve`: 1 ano, `pesado`: 5 anos com um mês de 150 lançamentos, `extremo`: 10 anos; o gerador está em `test/perf/volumes.ts`) num MongoDB em memória e chama o `GET /balances` por HTTP de verdade, com 3 requisições de aquecimento e 20 medidas, com e sem `Accept-Encoding: gzip`. Cada volume imprime uma linha com itens, mediana, p90, bytes na rede e a estimativa de gzip, e um ✅ ou ❌ pelo critério: mediana abaixo de 200 ms e no máximo 100 KB na rede.
+
+- Roda só com `npm run perf` (`vitest.perf.config.mts`, arquivos `*.perf.ts`); o `npm test` não o executa.
+- Nunca usa o `.env` nem o Atlas: o `MONGO_URI` vem do mesmo `mongodb-memory-server` da suíte.
+- Os números dependem da máquina: use-os para comparar antes e depois de uma mudança, na mesma máquina.
+
+Linha de base de 2026-11-27 (notebook, sem gzip, dados sintéticos):
+
+| Volume | Itens | Mediana | p90 | Resposta | Estimativa com gzip | Resultado |
+|---|---|---|---|---|---|---|
+| leve | 504 | 10 ms | 12 ms | 98 KB | 7 KB | ✅ |
+| pesado | 3.724 | 66 ms | 69 ms | 724 KB | 53 KB | ❌ (rede) |
+| extremo | 8.400 | 183 ms | 227 ms | 1.632 KB | 113 KB | ❌ (rede, mesmo com gzip) |
+
+Com o gzip ligado (`compression()`), pedindo `Accept-Encoding: gzip`: `leve` 7 KB ✅, `pesado` 53 KB ✅ e `extremo` 113 KB ❌ (o critério é 100 KB).
 
 ## Padrões
 

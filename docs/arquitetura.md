@@ -43,12 +43,13 @@ A ordem importa: cada etapa só vê o que passou pelas anteriores.
 2. `trust proxy`, se `TRUST_PROXY > 0`.
 3. Logger (`pino-http`): um log por requisição, com o `Authorization` oculto.
 4. `helmet()`: cabeçalhos de segurança.
-5. Limite de requisições: um para `/auth` e outro para o resto.
-6. `express.json()`: lê o corpo. JSON malformado vira erro 400 no `errorHandler`.
-7. Rotas de autenticação e de lançamentos.
-8. Documentação (`/docs` e `/docs/openapi.json`).
-9. `notFoundHandler`: qualquer outro caminho responde 404 em JSON.
-10. `errorHandler`: converte erros no formato padrão (veja [Erros](erros.md)).
+5. `compression()`: comprime a resposta com gzip quando o cliente manda `Accept-Encoding: gzip` e ela passa de 1 KB. O `GET /balances` devolve o histórico inteiro (~90 KB por ano sem compressão, ~7 KB com gzip, nos dados de teste). Uma resposta comprimida sai sem `Content-Length` (`Transfer-Encoding: chunked`).
+6. Limite de requisições: um para `/auth` e outro para o resto.
+7. `express.json()`: lê o corpo. JSON malformado vira erro 400 no `errorHandler`.
+8. Rotas de autenticação e de lançamentos.
+9. Documentação (`/docs` e `/docs/openapi.json`).
+10. `notFoundHandler`: qualquer outro caminho responde 404 em JSON.
+11. `errorHandler`: converte erros no formato padrão (veja [Erros](erros.md)).
 
 ## Caminho de uma requisição
 
@@ -63,7 +64,7 @@ sequenceDiagram
     participant S as BalanceService
     participant DB as MongoDB
     C->>MW: PATCH /balances/abc { value: 120 }
-    MW->>MW: logger, helmet, limite, express.json
+    MW->>MW: logger, helmet, compression, limite, express.json
     MW->>R: authMiddleware (JWT → req.user.id)
     R->>R: validateParams + validateBody (zod)
     R->>Ctl: update(req, res, next)
