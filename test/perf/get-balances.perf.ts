@@ -99,10 +99,9 @@ describe('GET /balances com histórico grande', () => {
       const semGzip = await medirRota('/balances', token, false);
       const comGzip = await medirRota('/balances', token, true);
 
-      const meses = JSON.parse(Buffer.from(semGzip.corpo).toString('utf8')) as Record<
-        string,
-        { gains: unknown[]; expenses: unknown[] }
-      >;
+      const meses = JSON.parse(
+        Buffer.from(semGzip.corpo).toString('utf8'),
+      ) as Record<string, { gains: unknown[]; expenses: unknown[] }>;
       const itens = Object.values(meses).reduce(
         (soma, m) => soma + m.gains.length + m.expenses.length,
         0,
